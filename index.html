@@ -1,0 +1,207 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="theme-color" content="#082f24">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="apple-touch-icon" href="icons/icon-192.png">
+<title>AgroLucro — Gestão agrícola</title>
+<style>
+:root{--green:#0b3b2d;--green2:#176744;--lime:#c9f27a;--bg:#f3f6f3;--card:#fff;--ink:#17231d;--muted:#637168;--line:#dfe7e0;--red:#b42318}
+*{box-sizing:border-box}body{margin:0;font:15px/1.45 system-ui,-apple-system,Segoe UI,Roboto,sans-serif;background:var(--bg);color:var(--ink)}
+header{background:linear-gradient(120deg,#082f24,#145b40);color:#fff;padding:22px max(16px,calc((100% - 1100px)/2));}
+.brand{display:flex;align-items:center;gap:12px}.logo{display:grid;place-items:center;width:48px;height:48px;border-radius:15px;background:#246b49;color:var(--lime);font-size:27px}.brand h1{margin:0;font-size:25px}.brand p{margin:2px 0 0;color:#c7dbd0;font-size:13px}
+.topgrid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:18px}.metric{padding:13px;background:#164735;border-radius:13px}.metric small{display:block;color:#c7dbd0}.metric strong{font-size:23px;color:var(--lime)}
+.wrap{max-width:1100px;margin:auto;padding:16px}.nav{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:16px}.nav button{border:1px solid var(--line);border-radius:11px;padding:11px 6px;background:#fff;color:var(--ink);font-weight:650}.nav button.active{background:#dff2e4;border-color:#9bcbaa;color:#145b40}
+main{min-height:360px}.card{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:16px;margin-bottom:12px}.card h2{margin:0 0 5px;font-size:20px}.sub{color:var(--muted);font-size:13px;margin:0 0 14px}.grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}.tiles{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}.tile{background:#f0f5f0;border-radius:12px;padding:13px}.tile small{display:block;color:var(--muted)}.tile strong{display:block;font-size:20px;margin-top:4px;overflow-wrap:anywhere}
+label{display:block;font-size:13px;font-weight:650;color:#405047;margin:0 0 5px}input,select{width:100%;padding:10px 11px;border:1px solid #cbd7ce;border-radius:9px;background:white;color:var(--ink);font:inherit;min-width:0}input:focus,select:focus{outline:2px solid #8ac69c;border-color:#176744}
+.field{margin-bottom:11px}.row{display:flex;gap:10px;align-items:center;justify-content:space-between}.row>*{min-width:0}.btn{border:0;border-radius:10px;padding:11px 14px;font:inherit;font-weight:700;cursor:pointer;background:var(--green2);color:#fff}.btn.secondary{background:#e9f1eb;color:#145b40;border:1px solid #cfdfd2}.btn.danger{background:#fff0ee;color:var(--red);padding:7px 10px}.btn.full{width:100%}.listitem{border:1px solid var(--line);border-radius:12px;padding:13px;margin:10px 0}.listitem h3{font-size:16px;margin:0 0 10px}.mini{font-size:12px;color:var(--muted)}.line{height:1px;background:var(--line);margin:12px 0}.good{color:#176744}.bad{color:var(--red)}.notice{background:#fff8df;border:1px solid #f0dda0;border-radius:11px;padding:12px;color:#66521a;font-size:13px}
+table{border-collapse:collapse;width:100%;font-size:13px}td,th{padding:9px 6px;border-bottom:1px solid var(--line);text-align:left}th{color:var(--muted);font-weight:650}td:last-child,th:last-child{text-align:right}.scroll{overflow-x:auto}
+footer{max-width:1100px;margin:auto;padding:4px 16px 24px;color:var(--muted);font-size:12px}
+@media(min-width:720px){.nav{grid-template-columns:repeat(6,1fr)}.tiles{grid-template-columns:repeat(4,minmax(0,1fr))}.topgrid{max-width:600px}.wrap{padding:22px}.grid{grid-template-columns:repeat(3,minmax(0,1fr))}}
+@media(max-width:380px){.nav button{font-size:12px}.brand h1{font-size:22px}.metric strong{font-size:19px}}
+</style>
+</head>
+<body>
+<header>
+  <div class="brand"><div class="logo">🌱</div><div><h1>AgroLucro</h1><p>Inteligência para o lucro por hectare</p></div></div>
+  <div class="topgrid">
+    <div class="metric"><small>Área cadastrada</small><strong id="headerArea">300 ha</strong></div>
+    <div class="metric"><small>Resultado estimado / ha</small><strong id="headerProfit">R$ 0,00</strong></div>
+  </div>
+</header>
+<div class="wrap">
+  <section class="card" id="installCard" style="display:none"><div class="row"><div><b>Instalar AgroLucro</b><div class="mini">Adicione à tela inicial como um aplicativo.</div></div><button class="btn" id="installBtn">Instalar</button></div></section>
+  <div class="nav" id="nav">
+    <button data-page="painel" class="active">▦ Painel</button>
+    <button data-page="safra">▤ Rentabilidade</button>
+    <button data-page="talhoes">⌖ Talhões</button>
+    <button data-page="custos">▣ Custos</button>
+    <button data-page="maquinas">⚙ Máquinas</button>
+    <button data-page="pulverizacao">♧ Aplicações</button>
+  </div>
+  <main id="app"></main>
+  <div class="row" style="margin:16px 0;flex-wrap:wrap">
+    <button class="btn secondary" id="exportBtn">Exportar backup</button>
+    <label class="btn secondary" for="importFile" style="cursor:pointer;margin:0">Importar backup</label>
+    <input id="importFile" type="file" accept="application/json" hidden>
+    <button class="btn secondary" id="resetBtn">Restaurar exemplo</button>
+  </div>
+  <div class="notice">Protótipo funcional: os dados ficam salvos neste navegador/dispositivo. Use “Exportar backup” regularmente. Ainda não há conta de usuário nem sincronização entre aparelhos.</div>
+</div>
+<footer>AgroLucro · Protótipo local · Confira os cálculos e cadastros antes de usar em decisões financeiras reais.</footer>
+<script>
+const KEY='agrolucro-v1';
+const defaults=()=>({
+ farm:'Fazenda Modelo',season:'2026/27',crop:'Soja',area:'500',yield:'70',price:'120',diesel:'6',
+ costs:[
+  {name:'Sementes',value:'380',category:'Insumos'},
+  {name:'Adubação',value:'1500',category:'Insumos'},
+  {name:'Defensivos',value:'650',category:'Insumos'},
+  {name:'Corretivos (rateio)',value:'180',category:'Outros'},
+  {name:'Transporte e comercialização',value:'220',category:'Comercialização'},
+  {name:'Armazenagem e secagem',value:'80',category:'Comercialização'},
+  {name:'Impostos e outros',value:'100',category:'Outros'}
+ ],
+ machines:[
+  {name:'Plantadeira',purchase:'500000',scrap:30,life:'10',fuel:'8',maintenance:'35',areaPerYear:'500'},
+  {name:'Pulverizador',purchase:'350000',scrap:40,life:'10',fuel:'2',maintenance:'18',areaPerYear:'2500'},
+  {name:'Colheitadeira',purchase:'1800000',scrap:30,life:'10',fuel:'18',maintenance:'100',areaPerYear:'500'},
+  {name:'Distribuidor de adubos',purchase:'120000',scrap:30,life:'10',fuel:'1.5',maintenance:'12',areaPerYear:'700'}
+ ],
+ fields:[
+  {name:'Talhão 1',area:'100',yield:'75',sprays:'3'},
+  {name:'Talhão 2',area:'120',yield:'68',sprays:'2'},
+  {name:'Talhão 3',area:'80',yield:'62',sprays:'4'}
+ ], page:'painel'
+});
+let state;
+try{state=JSON.parse(localStorage.getItem(KEY))||defaults()}catch(e){state=defaults()}
+let page='painel';
+const $=s=>document.querySelector(s), $$=s=>[...document.querySelectorAll(s)];
+const num=v=>Math.max(0,Number(String(v??'').replace(',','.'))||0);
+const money=v=>num(v).toLocaleString('pt-BR',{style:'currency',currency:'BRL'});
+const fmt=v=>num(v).toLocaleString('pt-BR',{maximumFractionDigits:2});
+const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+function save(){localStorage.setItem(KEY,JSON.stringify(state));renderHeader()}
+function field(label,key,value,type='text',extra=''){return `<div class="field"><label>${label}</label><input data-key="${key}" type="${type}" value="${esc(value)}" ${extra}></div>`}
+function selectField(label,key,value,options){return `<div class="field"><label>${label}</label><select data-key="${key}">${options.map(o=>`<option ${o===value?'selected':''}>${esc(o)}</option>`).join('')}</select></div>`}
+function setPath(path,value){const parts=path.split('.');let obj=state;for(let i=0;i<parts.length-1;i++)obj=obj[parts[i]];obj[parts.at(-1)]=value;save()}
+function areaTotal(){return state.fields.reduce((s,f)=>s+num(f.area),0)}
+function applications(){return state.fields.reduce((s,f)=>s+num(f.area)*num(f.sprays),0)}
+function machineCosts(m){const purchase=num(m.purchase),scrap=purchase*num(m.scrap)/100,life=Math.max(1,num(m.life)),annualArea=Math.max(1,num(m.areaPerYear));const depreciation=(purchase-scrap)/(life*annualArea);const fuel=num(m.fuel)*num(state.diesel);return {depreciation,fuel,maintenance:num(m.maintenance),total:depreciation+fuel+num(m.maintenance)}}
+function allMachineCosts(){return state.machines.reduce((s,m)=>s+machineCosts(m).total,0)}
+function baseCosts(){return state.costs.reduce((s,c)=>s+num(c.value),0)}
+function revenue(){return num(state.yield)*num(state.price)}
+function costsPerHa(){return baseCosts()+allMachineCosts()}
+function profit(){return revenue()-costsPerHa()}
+function renderHeader(){$('#headerArea').textContent=fmt(areaTotal())+' ha';$('#headerProfit').textContent=money(profit());$('#headerProfit').style.color=profit()>=0?'#c9f27a':'#ffb4a9'}
+function setPage(p){page=p;$$('#nav button').forEach(b=>b.classList.toggle('active',b.dataset.page===page));render()}
+function render(){
+ renderHeader();
+ let out='';
+ if(page==='painel'){
+ out=`<section class="card"><h2>Painel de gestão</h2><p class="sub">Visão geral da fazenda e da safra selecionada.</p><div class="grid">
+ ${selectField('Safra','season',state.season,['2025/26','2026/27','2027/28'])}
+ ${selectField('Cultura','crop',state.crop,['Soja','Milho','Feijão','Trigo','Cevada','Aveia'])}
+ ${field('Nome da fazenda','farm',state.farm)}
+ </div><div class="tiles">
+ <div class="tile"><small>Receita bruta estimada / ha</small><strong>${money(revenue())}</strong></div>
+ <div class="tile"><small>Custos cadastrados / ha</small><strong>${money(costsPerHa())}</strong></div>
+ <div class="tile"><small>Resultado estimado / ha</small><strong class="${profit()>=0?'good':'bad'}">${money(profit())}</strong></div>
+ <div class="tile"><small>Margem estimada</small><strong>${revenue()>0?fmt(profit()/revenue()*100):'0'}%</strong></div></div>
+ <div class="line"></div><div class="row"><div><b>Área cadastrada</b><div class="mini">${state.fields.length} talhões</div></div><b>${fmt(areaTotal())} ha</b></div>
+ <div class="row" style="margin-top:10px"><div><b>Área-aplicação</b><div class="mini">Área × entradas de pulverização</div></div><b>${fmt(applications())} ha-aplicação</b></div></section>
+ <section class="card"><h2>Atalhos</h2><p class="sub">Edite os dados para atualizar as estimativas.</p><div class="grid"><button class="btn" data-goto="safra">Simular rentabilidade</button><button class="btn secondary" data-goto="talhoes">Gerenciar talhões</button><button class="btn secondary" data-goto="custos">Detalhar custos</button></div></section>`;
+ }else if(page==='safra'){
+ out=`<section class="card"><h2>Simulador de rentabilidade</h2><p class="sub">Valores de receita e custos por hectare. Ajuste os campos e veja o resultado atualizado.</p><div class="grid">
+ ${field('Área total da fazenda (ha)','area',state.area,'number')}
+ ${field('Produtividade (sacas/ha)','yield',state.yield,'number')}
+ ${field('Preço por saca (R$)','price',state.price,'number')}
+ </div><div class="tiles">
+ <div class="tile"><small>Receita bruta / ha</small><strong>${money(revenue())}</strong></div>
+ <div class="tile"><small>Custos cadastrados / ha</small><strong>${money(costsPerHa())}</strong></div>
+ <div class="tile"><small>Resultado estimado / ha</small><strong class="${profit()>=0?'good':'bad'}">${money(profit())}</strong></div>
+ <div class="tile"><small>Resultado na área informada</small><strong class="${profit()>=0?'good':'bad'}">${money(profit()*num(state.area))}</strong></div></div>
+ <div class="line"></div><div class="row"><span>Preço de equilíbrio estimado</span><b>${num(state.yield)>0?money(costsPerHa()/num(state.yield))+'/sc':'—'}</b></div>
+ <div class="row" style="margin-top:8px"><span>Produtividade de equilíbrio estimada</span><b>${num(state.price)>0?fmt(costsPerHa()/num(state.price))+' sc/ha':'—'}</b></div>
+ <p class="mini" style="margin-top:12px">O resultado é uma estimativa antes de custos que não tenham sido cadastrados, como juros, impostos específicos, custo de oportunidade da terra e despesas administrativas.</p></section>`;
+ }else if(page==='talhoes'){
+ out=`<section class="card"><h2>Talhões</h2><p class="sub">Informe área, produtividade e entradas de pulverização de cada talhão.</p>
+ <div class="tiles"><div class="tile"><small>Área total</small><strong>${fmt(areaTotal())} ha</strong></div><div class="tile"><small>Área-aplicação</small><strong>${fmt(applications())} ha</strong></div></div>
+ <div id="fieldList">${state.fields.map((f,i)=>`<div class="listitem"><div class="row"><h3>${esc(f.name||'Talhão '+(i+1))}</h3><button class="btn danger" data-remove-field="${i}">Excluir</button></div><div class="grid">
+ ${field('Nome','fields.'+i+'.name',f.name)}
+ ${field('Área (ha)','fields.'+i+'.area',f.area,'number')}
+ ${field('Produtividade (sc/ha)','fields.'+i+'.yield',f.yield,'number')}
+ ${field('Entradas de pulverização','fields.'+i+'.sprays',f.sprays,'number')}
+ </div><div class="mini">Área-aplicação: ${fmt(num(f.area)*num(f.sprays))} ha</div></div>`).join('')}</div>
+ <button class="btn full" id="addField">＋ Adicionar talhão</button></section>`;
+ }else if(page==='custos'){
+ const categories=[...new Set(state.costs.map(c=>c.category||'Outros'))];
+ out=`<section class="card"><h2>Custos de produção</h2><p class="sub">Cadastre os custos por hectare. Mão de obra e operador não entram nos cálculos.</p>
+ ${categories.map(cat=>`<h3 style="font-size:15px;margin:18px 0 6px">${esc(cat)}</h3>`+state.costs.map((c,i)=>({c,i})).filter(x=>(x.c.category||'Outros')===cat).map(({c,i})=>`<div class="listitem"><div class="row"><b>${esc(c.name)}</b><button class="btn danger" data-remove-cost="${i}">Excluir</button></div><div class="grid" style="margin-top:10px">${field('Descrição','costs.'+i+'.name',c.name)}${field('Valor (R$/ha)','costs.'+i+'.value',c.value,'number')}${selectField('Categoria','costs.'+i+'.category',c.category||'Outros',['Insumos','Operações','Comercialização','Outros','Financeiro'])}</div></div>`).join('')).join('')}
+ <button class="btn full" id="addCost">＋ Adicionar custo</button><div class="line"></div><div class="row"><b>Total dos custos cadastrados</b><b>${money(baseCosts())}/ha</b></div>
+ <p class="mini" style="margin-top:10px">Cadastre cada item uma única vez. A depreciação, combustível e manutenção das máquinas são calculados separadamente na aba Máquinas para reduzir o risco de dupla contagem.</p></section>`;
+ }else if(page==='maquinas'){
+ out=`<section class="card"><h2>Máquinas e operações</h2><p class="sub">Depreciação, combustível e manutenção. Sem mão de obra nem custo de operador.</p>${field('Preço do diesel (R$/L)','diesel',state.diesel,'number')}
+ ${state.machines.map((m,i)=>{let c=machineCosts(m);return `<div class="listitem"><h3>${esc(m.name)}</h3><div class="grid">
+ ${field('Valor de compra (R$)','machines.'+i+'.purchase',m.purchase,'number')}
+ ${field('Valor de sucata (%)','machines.'+i+'.scrap',m.scrap,'number','min="0" max="100"')}
+ ${field('Vida útil (anos)','machines.'+i+'.life',m.life,'number')}
+ ${field('Consumo (L/ha trabalhado)','machines.'+i+'.fuel',m.fuel,'number')}
+ ${field('Manutenção (R$/ha trabalhado)','machines.'+i+'.maintenance',m.maintenance,'number')}
+ ${field('Área trabalhada média/ano (ha)','machines.'+i+'.areaPerYear',m.areaPerYear,'number')}
+ </div><div class="tiles"><div class="tile"><small>Valor de sucata</small><strong>${money(num(m.purchase)*num(m.scrap)/100)}</strong></div><div class="tile"><small>Depreciação / ha</small><strong>${money(c.depreciation)}</strong></div><div class="tile"><small>Combustível / ha</small><strong>${money(c.fuel)}</strong></div><div class="tile"><small>Custo total / ha trabalhado</small><strong>${money(c.total)}</strong></div></div></div>`}).join('')}
+ <div class="row"><b>Total estimado das máquinas por ha</b><b>${money(allMachineCosts())}</b></div>
+ <p class="mini" style="margin-top:10px">A área anual é uma estimativa de utilização por máquina para o cálculo de depreciação. O custo real deve ser rateado pela área efetivamente trabalhada em cada operação e consolidado sem duplicar operações entre talhões.</p></section>`;
+ }else{
+ const sprayer=state.machines.find(m=>m.name.toLowerCase().includes('pulverizador'))||state.machines[0];
+ const mc=machineCosts(sprayer);
+ out=`<section class="card"><h2>Calculadora de pulverização</h2><p class="sub">A área aplicada é calculada automaticamente somando área de cada talhão × número de entradas.</p>
+ <div class="tiles"><div class="tile"><small>Área cadastrada</small><strong>${fmt(areaTotal())} ha</strong></div><div class="tile"><small>Entradas equivalentes</small><strong>${fmt(applications())} ha-aplicação</strong></div></div>
+ <div class="line"></div><h3 style="font-size:16px">Dados do pulverizador</h3><p class="mini">Edite valor, sucata, vida útil, consumo e manutenção na aba Máquinas.</p>
+ <div class="tiles"><div class="tile"><small>Depreciação estimada / ha</small><strong>${money(mc.depreciation)}</strong></div><div class="tile"><small>Combustível / ha</small><strong>${money(mc.fuel)}</strong></div><div class="tile"><small>Manutenção / ha</small><strong>${money(mc.maintenance)}</strong></div><div class="tile"><small>Custo por ha-aplicação</small><strong>${money(mc.total)}</strong></div></div>
+ <div class="line"></div><h3 style="font-size:16px">Resumo por talhão</h3><div class="scroll"><table><thead><tr><th>Talhão</th><th>Área</th><th>Entradas</th><th>Ha-aplicação</th><th>Custo estimado</th></tr></thead><tbody>${state.fields.map(f=>`<tr><td>${esc(f.name)}</td><td>${fmt(f.area)}</td><td>${fmt(f.sprays)}</td><td>${fmt(num(f.area)*num(f.sprays))}</td><td>${money(num(f.area)*num(f.sprays)*mc.total)}</td></tr>`).join('')}</tbody></table></div>
+ <div class="line"></div><div class="row"><b>Custo estimado de pulverização</b><b>${money(applications()*mc.total)}</b></div>
+ <p class="mini" style="margin-top:10px">Nota: o custo de depreciação exibido é uma aproximação baseada na utilização anual configurada para a máquina. Para uma apuração contábil rigorosa, o sistema deve acumular as aplicações ao longo da vida útil e conciliar o custo com as demais operações da safra.</p></section>`;
+ }
+ $('#app').innerHTML=out;
+}
+document.addEventListener('click',e=>{
+ const nav=e.target.closest('[data-page]');if(nav){setPage(nav.dataset.page);return}
+ const go=e.target.closest('[data-goto]');if(go){setPage(go.dataset.goto);return}
+ if(e.target.id==='addField'){state.fields.push({name:'Talhão '+(state.fields.length+1),area:'0',yield:'0',sprays:'0'});save();render();return}
+ if(e.target.id==='addCost'){state.costs.push({name:'Novo custo',value:'0',category:'Outros'});save();render();return}
+ const rf=e.target.closest('[data-remove-field]');if(rf){state.fields.splice(Number(rf.dataset.removeField),1);save();render();return}
+ const rc=e.target.closest('[data-remove-cost]');if(rc){state.costs.splice(Number(rc.dataset.removeCost),1);save();render();return}
+});
+document.addEventListener('change',e=>{
+ const el=e.target;if(!el.matches('[data-key]'))return;
+ const path=el.dataset.key;setPath(path,el.value);render();
+});
+document.addEventListener('input',e=>{
+ const el=e.target;if(!el.matches('[data-key]'))return;
+ // Recalcula sem roubar o foco enquanto o usuário digita.
+ const path=el.dataset.key;setPath(path,el.value);
+ renderHeader();
+});
+$('#exportBtn').addEventListener('click',()=>{
+ const blob=new Blob([JSON.stringify(state,null,2)],{type:'application/json'});
+ const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download='backup-agrolucro.json';a.click();URL.revokeObjectURL(a.href);
+});
+$('#importFile').addEventListener('change',async e=>{
+ const f=e.target.files[0];if(!f)return;
+ try{const data=JSON.parse(await f.text());if(!data.fields||!data.costs||!data.machines)throw new Error('Formato inválido');state=data;save();setPage('painel');alert('Backup importado.');}
+ catch(err){alert('Não foi possível importar esse arquivo.');}e.target.value='';
+});
+$('#resetBtn').addEventListener('click',()=>{if(confirm('Restaurar os dados de exemplo? Isso substitui os dados atuais neste dispositivo.')){state=defaults();save();setPage('painel')}});
+render();
+
+let deferredInstallPrompt=null;
+window.addEventListener('beforeinstallprompt',e=>{e.preventDefault();deferredInstallPrompt=e;const c=document.getElementById('installCard');if(c)c.style.display='block';});
+document.addEventListener('click',async e=>{if(e.target && e.target.id==='installBtn' && deferredInstallPrompt){deferredInstallPrompt.prompt();await deferredInstallPrompt.userChoice;deferredInstallPrompt=null;const c=document.getElementById('installCard');if(c)c.style.display='none';}});
+if('serviceWorker' in navigator && location.protocol.startsWith('http')){window.addEventListener('load',()=>navigator.serviceWorker.register('./sw.js').catch(()=>{}));}
+</script>
+</body>
+</html>
